@@ -9,6 +9,7 @@ let yDirection = -2;
 
 let ballRadius = 10;
 let initialBallColor = "#0095DD";
+let ballSpeed = 2;
 
 const paddleHeight = 10;
 const paddleWidth = 80;
@@ -60,6 +61,7 @@ const ballCollisionAgainstWall = () => {
       }  else if (yPosition + yDirection > canvas.height - ballRadius) {
             if (xPosition > paddleX && xPosition < paddleX + paddleWidth) {
                 yDirection = -yDirection;
+                ballSpeed += 0.2;
             } else {
                 alert("GAME OVER");
                 document.location.reload();
@@ -72,8 +74,8 @@ const ballPath = () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawBall();
     drawPaddle();
-    xPosition += xDirection;
-    yPosition += yDirection;
+    xPosition += xDirection * ballSpeed;
+    yPosition += yDirection * ballSpeed;
     ballCollisionAgainstWall();
 
     if (rightPressed) {
@@ -108,5 +110,4 @@ const keyNoPressed = (event) => {
 document.addEventListener("keydown", keyPressed, false);
 document.addEventListener("keyup", keyNoPressed, false);
 
-// setInterval(ballPath, 10);
 let interval = setInterval(ballPath, 10);
