@@ -1,36 +1,25 @@
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 
-const redSquare = () => {
+let xPosition = canvas.width / 2;
+let yPosition = canvas.height - 30;
+
+let xDirection = 2;
+let yDirection = -2;
+
+const drawBall = () => {
     ctx.beginPath();
-    ctx.rect(20, 40, 50, 50);
-    ctx.fillStyle = "#FF0000";
+    ctx.arc(xPosition, yPosition, 10, 0, Math.PI * 2);
+    ctx.fillStyle = "#0095DD";
     ctx.fill();
     ctx.closePath();
-};
+  };
+  
+  const draw = () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawBall();
+    xPosition += xDirection;
+    yPosition += yDirection;
+  };
 
-const greenCircle = () => {
-    ctx.beginPath();
-    ctx.arc(240, 160, 20, 0, Math.PI * 2, false);
-    ctx.fillStyle = "green";
-    ctx.fill();
-    ctx.closePath();
-};
-
-const transparentRectangle = () => {
-    ctx.beginPath();
-    ctx.rect(160, 10, 100, 40);
-    ctx.strokeStyle = "rgba(0, 0, 255, 0.5)";
-    ctx.stroke();
-    ctx.closePath();
-};
-
-redSquare();
-greenCircle();
-transparentRectangle();
-
-
-
-
-
-
+  setInterval(draw, 10);
