@@ -57,12 +57,15 @@ const ballCollisionAgainstWall = () => {
 
     if (yPosition + yDirection < ballRadius) {
         yDirection = -yDirection;
-      } else if (yPosition + yDirection > canvas.height - ballRadius) {
-        alert("GAME OVER");
-        document.location.reload();
-        clearInterval(interval); 
-    };
-      
+      }  else if (yPosition + yDirection > canvas.height - ballRadius) {
+            if (xPosition > paddleX && xPosition < paddleX + paddleWidth) {
+                yDirection = -yDirection;
+            } else {
+                alert("GAME OVER");
+                document.location.reload();
+                clearInterval(interval);
+            }
+    };   
 };
   
 const ballPath = () => {
