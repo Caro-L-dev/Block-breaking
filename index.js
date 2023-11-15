@@ -50,15 +50,19 @@ const changeBallColor = () => {
 
 
 const ballCollisionAgainstWall = () => {
-    if (yPosition + yDirection < ballRadius || yPosition + yDirection > canvas.height - ballRadius) {
-        yDirection = -yDirection;
-        changeBallColor();
-    };
+     if (xPosition + xDirection < ballRadius || xPosition + xDirection > canvas.width - ballRadius) {
+         xDirection = -xDirection;
+         changeBallColor();
+     };
 
-    if (xPosition + xDirection < ballRadius || xPosition + xDirection > canvas.width - ballRadius) {
-        xDirection = -xDirection;
-        changeBallColor();
+    if (yPosition + yDirection < ballRadius) {
+        yDirection = -yDirection;
+      } else if (yPosition + yDirection > canvas.height - ballRadius) {
+        alert("GAME OVER");
+        document.location.reload();
+        clearInterval(interval); 
     };
+      
 };
   
 const ballPath = () => {
@@ -101,4 +105,5 @@ const keyNoPressed = (event) => {
 document.addEventListener("keydown", keyPressed, false);
 document.addEventListener("keyup", keyNoPressed, false);
 
-setInterval(ballPath, 10);
+// setInterval(ballPath, 10);
+let interval = setInterval(ballPath, 10);
