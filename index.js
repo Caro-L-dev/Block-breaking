@@ -10,6 +10,13 @@ let yDirection = -2;
 let ballRadius = 10;
 let initialBallColor = "#0095DD";
 
+const paddleHeight = 10;
+const paddleWidth = 80;
+let paddleX = (canvas.width - paddleWidth) / 2;
+
+let rightPressed = false;
+let leftPressed = false;
+
 
 const drawBall = () => {
     ctx.beginPath();
@@ -17,7 +24,16 @@ const drawBall = () => {
     ctx.fillStyle = initialBallColor;
     ctx.fill();
     ctx.closePath();
-  };
+};
+
+const drawPaddle = () => {
+    ctx.beginPath();
+    ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight);
+    ctx.fillStyle = "#0095DD";
+    ctx.fill();
+    ctx.closePath();
+};
+  
 
 const getRandomHexadecimalColor = () => {
     const letters = "0123456789ABCDEF";
@@ -48,9 +64,41 @@ const ballCollisionAgainstWall = () => {
 const ballPath = () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawBall();
+    drawPaddle();
     xPosition += xDirection;
     yPosition += yDirection;
     ballCollisionAgainstWall();
+
+    if (rightPressed) {
+        paddleX += 7;
+        if (paddleX + paddleWidth > canvas.width) {
+          paddleX = canvas.width - paddleWidth;
+        }
+      } else if (leftPressed) {
+        paddleX -= 7;
+        if (paddleX < 0) {
+          paddleX = 0;
+        }
+      };  
 };
+
+const keyPressed = (event) => {
+    if (event.key == "Right" || event.key == "ArrowRight") {
+      rightPressed = true;
+    } else if (event.key == "Left" || event.key == "ArrowLeft") {
+      leftPressed = true;
+    };
+};
+  
+const keyNoPressed = (event) => {
+    if (event.key == "Right" || event.key == "ArrowRight") {
+        rightPressed = false;
+    } else if (event.key == "Left" || event.key == "ArrowLeft") {
+        leftPressed = false;
+    };
+};
+
+document.addEventListener("keydown", keyPressed, false);
+document.addEventListener("keyup", keyNoPressed, false);
 
 setInterval(ballPath, 10);
