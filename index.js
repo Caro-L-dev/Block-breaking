@@ -95,6 +95,25 @@ const changeBallColor = () => {
     ballColor = getRandomHexadecimalColor();
 };
 
+const gameOver = () => {
+  let gameOverMessage = document.createElement("div");
+  gameOverMessage.innerHTML = "<h2>Game Over</h2>";
+  gameOverMessage.style.color = "#FF0000";
+  gameOverMessage.style.textAlign = "center";
+  
+  let replayButton = document.createElement("button");
+  replayButton.id = "replayButton";
+  replayButton.textContent = "Rejouer";
+  replayButton.addEventListener("click", () => {
+    document.location.reload();
+  });
+  gameOverMessage.appendChild(replayButton);
+
+  document.body.appendChild(gameOverMessage);
+  clearInterval(interval);
+};
+
+
 const ballCollisionAgainstWall = () => {
      if (xPosition + xDirection < ballRadius || xPosition + xDirection > canvas.width - ballRadius) {
          xDirection = -xDirection;
@@ -107,9 +126,7 @@ const ballCollisionAgainstWall = () => {
                 yDirection = -yDirection;
                 ballSpeed += 0.2;
              }  else {
-              alert("GAME OVER");
-              document.location.reload();
-              clearInterval(interval);
+              gameOver();
           };
     };   
 };
