@@ -29,12 +29,13 @@ const brickPadding = 10;
 const brickOffsetTop = 30;
 const brickOffsetLeft = 30;
 
+let interval;
 
 let bricks = [];
 for(let column = 0; column < brickColumnCount; column++) {
     bricks[column] = [];
     for(let row = 0; row < brickRowCount; row++) {
-        bricks[column][row] = { xPosition: 0, yPosition: 0 };
+        bricks[column][row] = { xPosition: 0, yPosition: 0, isVisible: 1 };
     };
 };
 
@@ -58,20 +59,21 @@ const drawPaddle = () => {
 const drawBricks = () => {
   for(let column = 0; column < brickColumnCount; column++) {
       for(let row = 0; row < brickRowCount; row++) {
-          let brickX = (column * (brickWidth+brickPadding))+brickOffsetLeft;
-          let brickY = (row * (brickHeight+brickPadding))+brickOffsetTop;
+        if (bricks[column][row].isVisible) {
+          let brickX = column * (brickWidth + brickPadding) + brickOffsetLeft;
+          let brickY = row * (brickHeight + brickPadding) + brickOffsetTop;
           bricks[column][row].xPosition = brickX;
           bricks[column][row].yPosition = brickY;
           ctx.beginPath();
           ctx.rect(brickX, brickY, brickWidth, brickHeight);
-          ctx.fillStyle = "#0095DD";
+          ctx.fillStyle = brickColor;
           ctx.fill();
           ctx.closePath();
+        }
       };
   };
 };
-     
-  
+    
 
 const getRandomHexadecimalColor = () => {
     const letters = "0123456789ABCDEF";
@@ -99,22 +101,22 @@ const ballCollisionAgainstWall = () => {
             if (xPosition > paddleX && xPosition < paddleX + paddleWidth) {
                 yDirection = -yDirection;
                 ballSpeed += 0.2;
-            } else {
-                alert("GAME OVER");
-                document.location.reload();
-                clearInterval(interval);
-            }
+             }  else {
+              alert("GAME OVER");
+              document.location.reload();
+              clearInterval(interval);
+          };
     };   
 };
+
   
 const ballPath = () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawBall();
     drawBricks();
     drawPaddle();
-    xPosition += xDirection * ballSpeed;
-    yPosition += yDirection * ballSpeed;
     ballCollisionAgainstWall();
+    collisionDetection();
 
     if (rightPressed) {
         paddleX += 7;
@@ -127,6 +129,9 @@ const ballPath = () => {
           paddleX = 0;
         }
       };  
+
+      xPosition += xDirection * ballSpeed;
+      yPosition += yDirection * ballSpeed;
 };
 
 const keyPressed = (event) => {
@@ -145,7 +150,26 @@ const keyNoPressed = (event) => {
     };
 };
 
+const collisionDetection = () => {
+  for (let column = 0; column < brickColumnCount; column++) {
+    for (let row = 0; row < brickRowCount; row++) {
+      let brick = bricks[column][row];
+      if (brick.isVisible) {
+        if (
+          xPosition > brick.xPosition &&
+          xPosition < brick.xPosition + brickWidth &&
+          yPosition > brick.yPosition &&
+          yPosition < brick.yPosition + brickHeight
+        ) {
+          yDirection = -yDirection;
+          brick.isVisible = false;
+        };
+      }
+    };
+  };
+};
+
 document.addEventListener("keydown", keyPressed, false);
 document.addEventListener("keyup", keyNoPressed, false);
 
-let interval = setInterval(ballPath, 10);
+interval = setInterval(ballPath, 10);
