@@ -8,8 +8,11 @@ let xDirection = 2;
 let yDirection = -2;
 
 let ballRadius = 10;
-let initialBallColor = "#0095DD";
 let ballSpeed = 2;
+
+let initialBallColor = "#0095DD";
+let brickColor = "#0095DD";
+let paddleColor = "#0095DD";
 
 const paddleHeight = 10;
 const paddleWidth = 80;
@@ -17,6 +20,23 @@ let paddleX = (canvas.width - paddleWidth) / 2;
 
 let rightPressed = false;
 let leftPressed = false;
+
+const brickRowCount = 3;
+const brickColumnCount = 5;
+const brickWidth = 75;
+const brickHeight = 20;
+const brickPadding = 10;
+const brickOffsetTop = 30;
+const brickOffsetLeft = 30;
+
+
+let bricks = [];
+for(let column = 0; column < brickColumnCount; column++) {
+    bricks[column] = [];
+    for(let row = 0; row < brickRowCount; row++) {
+        bricks[column][row] = { xPosition: 0, yPosition: 0 };
+    };
+};
 
 
 const drawBall = () => {
@@ -30,10 +50,27 @@ const drawBall = () => {
 const drawPaddle = () => {
     ctx.beginPath();
     ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight);
-    ctx.fillStyle = "#0095DD";
+    ctx.fillStyle = paddleColor;
     ctx.fill();
     ctx.closePath();
 };
+
+const drawBricks = () => {
+  for(let column = 0; column < brickColumnCount; column++) {
+      for(let row = 0; row < brickRowCount; row++) {
+          let brickX = (column * (brickWidth+brickPadding))+brickOffsetLeft;
+          let brickY = (row * (brickHeight+brickPadding))+brickOffsetTop;
+          bricks[column][row].xPosition = brickX;
+          bricks[column][row].yPosition = brickY;
+          ctx.beginPath();
+          ctx.rect(brickX, brickY, brickWidth, brickHeight);
+          ctx.fillStyle = "#0095DD";
+          ctx.fill();
+          ctx.closePath();
+      };
+  };
+};
+     
   
 
 const getRandomHexadecimalColor = () => {
@@ -73,6 +110,7 @@ const ballCollisionAgainstWall = () => {
 const ballPath = () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawBall();
+    drawBricks();
     drawPaddle();
     xPosition += xDirection * ballSpeed;
     yPosition += yDirection * ballSpeed;
