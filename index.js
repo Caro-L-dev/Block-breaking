@@ -10,7 +10,7 @@ let yDirection = -2;
 let ballRadius = 10;
 let ballSpeed = 2;
 
-let initialBallColor = "#0095DD";
+let ballColor = "#0095DD";
 let brickColor = "#0095DD";
 let paddleColor = "#0095DD";
 
@@ -43,7 +43,7 @@ for(let column = 0; column < brickColumnCount; column++) {
 const drawBall = () => {
     ctx.beginPath();
     ctx.arc(xPosition, yPosition, ballRadius, 10, 0, Math.PI * 2);
-    ctx.fillStyle = initialBallColor;
+    ctx.fillStyle = ballColor;
     ctx.fill();
     ctx.closePath();
 };
@@ -85,14 +85,12 @@ const getRandomHexadecimalColor = () => {
 };
 
 const changeBallColor = () => {
-    initialBallColor = getRandomHexadecimalColor();
+    ballColor = getRandomHexadecimalColor();
 };
-
 
 const ballCollisionAgainstWall = () => {
      if (xPosition + xDirection < ballRadius || xPosition + xDirection > canvas.width - ballRadius) {
          xDirection = -xDirection;
-         changeBallColor();
      };
 
     if (yPosition + yDirection < ballRadius) {
@@ -163,6 +161,7 @@ const collisionDetection = () => {
         ) {
           yDirection = -yDirection;
           brick.isVisible = false;
+          changeBallColor();
         };
       }
     };
