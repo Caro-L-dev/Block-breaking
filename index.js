@@ -30,6 +30,7 @@ const brickOffsetTop = 30;
 const brickOffsetLeft = 30;
 
 let interval;
+let score = 0;
 
 let bricks = [];
 for(let column = 0; column < brickColumnCount; column++) {
@@ -73,6 +74,12 @@ const drawBricks = () => {
       };
   };
 };
+
+const drawScore = () => {
+  ctx.font = "16px Arial";
+  ctx.fillStyle = "#0095DD";
+  ctx.fillText("Score: " + score, 8, 20);
+};
     
 
 const getRandomHexadecimalColor = () => {
@@ -107,30 +114,6 @@ const ballCollisionAgainstWall = () => {
     };   
 };
 
-  
-const ballPath = () => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawBall();
-    drawBricks();
-    drawPaddle();
-    ballCollisionAgainstWall();
-    collisionDetection();
-
-    if (rightPressed) {
-        paddleX += 7;
-        if (paddleX + paddleWidth > canvas.width) {
-          paddleX = canvas.width - paddleWidth;
-        }
-      } else if (leftPressed) {
-        paddleX -= 7;
-        if (paddleX < 0) {
-          paddleX = 0;
-        }
-      };  
-
-      xPosition += xDirection * ballSpeed;
-      yPosition += yDirection * ballSpeed;
-};
 
 const keyPressed = (event) => {
     if (event.key == "Right" || event.key == "ArrowRight") {
@@ -162,11 +145,43 @@ const collisionDetection = () => {
           yDirection = -yDirection;
           brick.isVisible = false;
           changeBallColor();
+          score++;
+          if (score == brickRowCount * brickColumnCount) {
+            alert("C'est gagné, Bravo!");
+            document.location.reload();
+            clearInterval(interval); 
+          }
         };
       }
     };
   };
 };
+
+const ballPath = () => {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawBall();
+  drawBricks();
+  drawPaddle();
+  drawScore();
+  ballCollisionAgainstWall();
+  collisionDetection();
+
+  if (rightPressed) {
+      paddleX += 7;
+      if (paddleX + paddleWidth > canvas.width) {
+        paddleX = canvas.width - paddleWidth;
+      }
+    } else if (leftPressed) {
+      paddleX -= 7;
+      if (paddleX < 0) {
+        paddleX = 0;
+      }
+    };  
+
+    xPosition += xDirection * ballSpeed;
+    yPosition += yDirection * ballSpeed;
+};
+
 
 document.addEventListener("keydown", keyPressed, false);
 document.addEventListener("keyup", keyNoPressed, false);
