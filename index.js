@@ -15,7 +15,8 @@ let ballColor = mainColor;
 let brickColor = mainColor;
 let paddleColor = mainColor;
 let drawScoreColor = mainColor;
-let gameOverMessageColor = "#991b1b";
+let gameOverMsgColor = "#991b1b";
+let victoryMsgColor = "#16a34a";
 
 const paddleHeight = 10;
 const paddleWidth = 80;
@@ -102,7 +103,7 @@ const gameOver = () => {
     gameOverFlag = true;
     let gameOverMessage = document.createElement("div");
     gameOverMessage.innerHTML = "<h2>Game Over</h2>";
-    gameOverMessage.style.color = gameOverMessageColor;
+    gameOverMessage.style.color = gameOverMsgColor;
     gameOverMessage.style.textAlign = "center";
 
     let replayButton = document.createElement("button");
