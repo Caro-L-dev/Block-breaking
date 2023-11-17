@@ -1,28 +1,28 @@
 class EventHandlers {
   constructor() {
-    this.keyPressed = this.keyPressed.bind(this);
-    this.keyNoPressed = this.keyNoPressed.bind(this);
-    this.mouseMoveHandler = this.mouseMoveHandler.bind(this);
+    this.handleKeyPressed = this.handleKeyPressed.bind(this);
+    this.handleKeyNoPressed = this.handleKeyNoPressed.bind(this);
+    this.handleMouseMove = this.handleMouseMove.bind(this);
   }
 
-  keyPressed(event) {
+  handleKeyPressed(event) {
     if (event.key === RIGHT_KEY || event.key === ARROW_RIGHT_KEY) {
-      rightPressed = true;
+      isRightKeyPressed = true;
     } else if (event.key === LEFT_KEY || event.key === ARROW_LEFT_KEY) {
-      leftPressed = true;
+      isLeftKeyPressed = true;
     }
   }
 
-  keyNoPressed(event) {
+  handleKeyNoPressed(event) {
     if (event.key === RIGHT_KEY || event.key === ARROW_RIGHT_KEY) {
-      rightPressed = false;
+      isRightKeyPressed = false;
     } else if (event.key === LEFT_KEY || event.key === ARROW_LEFT_KEY) {
-      leftPressed = false;
+      isLeftKeyPressed = false;
     }
   }
 
-  mouseMoveHandler(event) {
-    let relativeX = event.clientX - canvasObj.canvas.offsetLeft;
+  handleMouseMove(event) {
+    const relativeX = event.clientX - canvasObj.canvas.offsetLeft;
     if (
       relativeX > paddle.width / 2 &&
       relativeX < canvasObj.canvas.width - paddle.width / 2
@@ -72,11 +72,11 @@ class Brick {
 const CANVAS_ID = "myCanvas";
 const canvasObj = new Canvas(CANVAS_ID);
 
-let xPosition = canvasObj.canvas.width / 2;
-let yPosition = canvasObj.canvas.height - 30;
+let ballX = canvasObj.canvas.width / 2;
+let ballY = canvasObj.canvas.height - 30;
 
-let xDirection = 2;
-let yDirection = -2;
+let ballXDirection = 2;
+let ballYDirection = -2;
 
 let ball = {
   xPosition: canvasObj.canvas.width / 2,
@@ -110,10 +110,10 @@ let drawScoreColor = MAIN_COLOR;
 
 const PADDLE_HEIGHT = 10;
 const PADDLE_WIDTH = 80;
-let xPaddle = (canvasObj.canvas.width - PADDLE_WIDTH) / 2;
+let paddleX = (canvasObj.canvas.width - PADDLE_WIDTH) / 2;
 
-let rightPressed = false;
-let leftPressed = false;
+let isRightKeyPressed = false;
+let isLeftKeyPressed = false;
 
 const RIGHT_KEY = "Right";
 const LEFT_KEY = "Left";
@@ -131,7 +131,7 @@ const BRICK_COLOR = "#0095DD";
 
 let interval;
 let score = 0;
-let gameOverFlag = false;
+let isGameOver = false;
 
 let bricks = [];
 for (let column = 0; column < BRICK_COLUMN_COUNT; column++) {
@@ -216,7 +216,7 @@ const showMessage = (msg, color) => {
 };
 
 const displayGameResultMsg = () => {
-  gameOverFlag = true;
+  isGameOver = true;
   if (score >= BRICK_ROW_COUNT * BRICK_COLUMN_COUNT) {
     showMessage("Super, vous avez gagné !", VICTORY_MSG_COLOR);
   } else {
@@ -293,21 +293,21 @@ const play = () => {
   ballCollisionAgainstWall();
   ballCollisionAgainstBricks();
 
-  if (!gameOverFlag) {
+  if (!isGameOver) {
     if (score >= BRICK_ROW_COUNT * BRICK_COLUMN_COUNT) {
       displayGameResultMsg();
-      gameOverFlag = true;
+      isGameOver = true;
       cancelAnimationFrame(interval);
       return;
     }
 
-    if (!gameOverFlag) {
-      if (rightPressed) {
+    if (!isGameOver) {
+      if (isRightKeyPressed) {
         paddle.xPosition += paddle.speed;
         if (paddle.xPosition + paddle.width > canvasObj.canvas.width) {
           paddle.xPosition = canvasObj.canvas.width - paddle.width;
         }
-      } else if (leftPressed) {
+      } else if (isLeftKeyPressed) {
         paddle.xPosition -= paddle.speed;
         if (paddle.xPosition < 0) {
           paddle.xPosition = 0;
@@ -321,22 +321,22 @@ const play = () => {
   }
 };
 
-const mouseMoveHandler = (event) => {
-  eventHandlers.mouseMoveHandler(event);
+const handleMouseMove = (event) => {
+  eventHandlers.handleMouseMove(event);
 };
 
-const keyPressed = (event) => {
-  eventHandlers.keyPressed(event);
+const handleKeyPressed = (event) => {
+  eventHandlers.handleKeyPressed(event);
 };
 
-const keyNoPressed = (event) => {
-  eventHandlers.keyNoPressed(event);
+const handleKeyNoPressed = (event) => {
+  eventHandlers.handleKeyNoPressed(event);
 };
 
 const eventHandlers = new EventHandlers();
 
-document.addEventListener("keydown", keyPressed, false);
-document.addEventListener("keyup", keyNoPressed, false);
-document.addEventListener("mousemove", mouseMoveHandler, false);
+document.addEventListener("keydown", handleKeyPressed, false);
+document.addEventListener("keyup", handleKeyNoPressed, false);
+document.addEventListener("mousemove", handleMouseMove, false);
 
 play();
