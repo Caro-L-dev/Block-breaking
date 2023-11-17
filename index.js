@@ -98,24 +98,35 @@ const changeBallColor = () => {
   ballColor = getRandomHexadecimalColor();
 };
 
-const gameOver = () => {
+const showMessage = (msg, color) => {
+  let message = document.createElement("div");
+  message.innerHTML = `<h2>${msg}</h2>`;
+  message.style.color = color;
+  message.style.textAlign = "center";
+
+  let replayButton = document.createElement("button");
+  replayButton.id = "replayButton";
+  replayButton.textContent = "Rejouer";
+  replayButton.addEventListener("click", () => {
+    document.location.reload();
+  });
+  message.appendChild(replayButton);
+
+  document.body.appendChild(message);
+};
+
+const displayGameOverMsg = () => {
   if (!gameOverFlag && score !== brickRowCount * brickColumnCount) {
     gameOverFlag = true;
-    let gameOverMsg = document.createElement("div");
-    gameOverMsg.innerHTML = "<h2>Game Over</h2>";
-    gameOverMsg.style.color = gameOverMsgColor;
-    gameOverMsg.style.textAlign = "center";
+    showMessage("Game Over", gameOverMsgColor);
+    cancelAnimationFrame(interval);
+  }
+};
 
-    let replayButton = document.createElement("button");
-    replayButton.id = "replayButton";
-    replayButton.textContent = "Rejouer";
-    replayButton.addEventListener("click", () => {
-      document.location.reload();
-    });
-    gameOverMsg.appendChild(replayButton);
-
-    document.body.appendChild(gameOverMsg);
-
+const displayVictoryMsg = () => {
+  if (score == brickRowCount * brickColumnCount) {
+    gameOverFlag = true;
+    showMessage("Super, vous avez gagné !", victoryMsgColor);
     cancelAnimationFrame(interval);
   }
 };
@@ -146,7 +157,7 @@ const ballCollisionAgainstWall = () => {
     if (xPosition > paddleX && xPosition < paddleX + paddleWidth) {
       checkPaddleEdgeCollisions();
     } else {
-      gameOver();
+      displayGameOverMsg();
     }
   }
 };
@@ -164,27 +175,6 @@ const keyNoPressed = (event) => {
     rightPressed = false;
   } else if (event.key == "Left" || event.key == "ArrowLeft") {
     leftPressed = false;
-  }
-};
-
-const displayVictoryMsg = () => {
-  if (score == brickRowCount * brickColumnCount) {
-    let victoryMsg = document.createElement("div");
-    victoryMsg.innerHTML = "<h2>Super, vous avez gagné !</h2>";
-    victoryMsg.style.color = victoryMsgColor;
-    victoryMsg.style.textAlign = "center";
-
-    let replayButton = document.createElement("button");
-    replayButton.id = "replayButton";
-    replayButton.textContent = "Rejouer";
-    replayButton.addEventListener("click", () => {
-      document.location.reload();
-    });
-    victoryMsg.appendChild(replayButton);
-
-    document.body.appendChild(victoryMsg);
-
-    cancelAnimationFrame(interval);
   }
 };
 
