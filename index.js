@@ -31,6 +31,7 @@ const brickOffsetLeft = 30;
 
 let interval;
 let score = 0;
+let gameOverFlag = false;
 
 let bricks = [];
 for (let column = 0; column < brickColumnCount; column++) {
@@ -94,21 +95,26 @@ const changeBallColor = () => {
 };
 
 const gameOver = () => {
-  let gameOverMessage = document.createElement("div");
-  gameOverMessage.innerHTML = "<h2>Game Over</h2>";
-  gameOverMessage.style.color = "#FF0000";
-  gameOverMessage.style.textAlign = "center";
+  if (!gameOverFlag) {
+    gameOverFlag = true;
+    let gameOverMessage = document.createElement("div");
+    gameOverMessage.innerHTML = "<h2>Game Over</h2>";
+    gameOverMessage.style.color = "#FF0000";
+    gameOverMessage.style.textAlign = "center";
 
-  let replayButton = document.createElement("button");
-  replayButton.id = "replayButton";
-  replayButton.textContent = "Rejouer";
-  replayButton.addEventListener("click", () => {
-    document.location.reload();
-  });
-  gameOverMessage.appendChild(replayButton);
+    let replayButton = document.createElement("button");
+    replayButton.id = "replayButton";
+    replayButton.textContent = "Rejouer";
+    replayButton.addEventListener("click", () => {
+      document.location.reload();
+    });
+    gameOverMessage.appendChild(replayButton);
 
-  document.body.appendChild(gameOverMessage);
-  clearInterval(interval);
+    document.body.appendChild(gameOverMessage);
+
+    // Stop the game loop
+    cancelAnimationFrame(interval);
+  }
 };
 
 const ballCollisionAgainstWall = () => {
@@ -165,7 +171,6 @@ const collisionDetection = () => {
           if (score == brickRowCount * brickColumnCount) {
             alert("C'est gagné, Bravo!");
             document.location.reload();
-            clearInterval(interval);
           }
         }
       }
@@ -183,7 +188,7 @@ const mouseMoveHandler = (event) => {
   }
 };
 
-const ballPath = () => {
+const play = () => {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawBall();
   drawBricks();
@@ -192,24 +197,27 @@ const ballPath = () => {
   ballCollisionAgainstWall();
   collisionDetection();
 
-  if (rightPressed) {
-    paddleX += 7;
-    if (paddleX + paddleWidth > canvas.width) {
-      paddleX = canvas.width - paddleWidth;
+  if (!gameOverFlag) {
+    if (rightPressed) {
+      paddleX += 7;
+      if (paddleX + paddleWidth > canvas.width) {
+        paddleX = canvas.width - paddleWidth;
+      }
+    } else if (leftPressed) {
+      paddleX -= 7;
+      if (paddleX < 0) {
+        paddleX = 0;
+      }
     }
-  } else if (leftPressed) {
-    paddleX -= 7;
-    if (paddleX < 0) {
-      paddleX = 0;
-    }
-  }
 
-  xPosition += xDirection * ballSpeed;
-  yPosition += yDirection * ballSpeed;
+    xPosition += xDirection * ballSpeed;
+    yPosition += yDirection * ballSpeed;
+    interval = requestAnimationFrame(play);
+  }
 };
 
 document.addEventListener("keydown", keyPressed, false);
 document.addEventListener("keyup", keyNoPressed, false);
 document.addEventListener("mousemove", mouseMoveHandler, false);
 
-interval = setInterval(ballPath, 10);
+play();
