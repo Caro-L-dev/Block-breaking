@@ -1,3 +1,37 @@
+class EventHandlers {
+  constructor() {
+    this.keyPressed = this.keyPressed.bind(this);
+    this.keyNoPressed = this.keyNoPressed.bind(this);
+    this.mouseMoveHandler = this.mouseMoveHandler.bind(this);
+  }
+
+  keyPressed(event) {
+    if (event.key === RIGHT_KEY || event.key === ARROW_RIGHT_KEY) {
+      rightPressed = true;
+    } else if (event.key === LEFT_KEY || event.key === ARROW_LEFT_KEY) {
+      leftPressed = true;
+    }
+  }
+
+  keyNoPressed(event) {
+    if (event.key === RIGHT_KEY || event.key === ARROW_RIGHT_KEY) {
+      rightPressed = false;
+    } else if (event.key === LEFT_KEY || event.key === ARROW_LEFT_KEY) {
+      leftPressed = false;
+    }
+  }
+
+  mouseMoveHandler(event) {
+    let relativeX = event.clientX - canvasObj.canvas.offsetLeft;
+    if (
+      relativeX > paddle.width / 2 &&
+      relativeX < canvasObj.canvas.width - paddle.width / 2
+    ) {
+      paddle.xPosition = relativeX - paddle.width / 2;
+    }
+  }
+}
+
 class Canvas {
   constructor(canvasId) {
     this.canvas = document.getElementById(canvasId);
@@ -229,22 +263,6 @@ const ballCollisionAgainstWall = () => {
   }
 };
 
-const keyPressed = (event) => {
-  if (event.key == RIGHT_KEY || event.key == ARROW_RIGHT_KEY) {
-    rightPressed = true;
-  } else if (event.key == LEFT_KEY || event.key == ARROW_LEFT_KEY) {
-    leftPressed = true;
-  }
-};
-
-const keyNoPressed = (event) => {
-  if (event.key == RIGHT_KEY || event.key == ARROW_RIGHT_KEY) {
-    rightPressed = false;
-  } else if (event.key == LEFT_KEY || event.key == ARROW_LEFT_KEY) {
-    leftPressed = false;
-  }
-};
-
 const ballCollisionAgainstBricks = () => {
   for (let column = 0; column < BRICK_COLUMN_COUNT; column++) {
     for (let row = 0; row < BRICK_ROW_COUNT; row++) {
@@ -263,16 +281,6 @@ const ballCollisionAgainstBricks = () => {
         }
       }
     }
-  }
-};
-
-const mouseMoveHandler = (event) => {
-  let relativeX = event.clientX - canvasObj.canvas.offsetLeft;
-  if (
-    relativeX > paddle.width / 2 &&
-    relativeX < canvasObj.canvas.width - paddle.width / 2
-  ) {
-    paddle.xPosition = relativeX - paddle.width / 2;
   }
 };
 
@@ -312,6 +320,20 @@ const play = () => {
     }
   }
 };
+
+const mouseMoveHandler = (event) => {
+  eventHandlers.mouseMoveHandler(event);
+};
+
+const keyPressed = (event) => {
+  eventHandlers.keyPressed(event);
+};
+
+const keyNoPressed = (event) => {
+  eventHandlers.keyNoPressed(event);
+};
+
+const eventHandlers = new EventHandlers();
 
 document.addEventListener("keydown", keyPressed, false);
 document.addEventListener("keyup", keyNoPressed, false);
