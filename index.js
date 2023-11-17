@@ -1,3 +1,14 @@
+class Canvas {
+  constructor(canvasId) {
+    this.canvas = document.getElementById(canvasId);
+    this.ctx = this.canvas.getContext("2d");
+  }
+
+  clearCanvas() {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+  }
+}
+
 class Brick {
   constructor(x, y) {
     this.xPosition = x;
@@ -10,31 +21,32 @@ class Brick {
 
   drawBrick() {
     if (this.isVisible) {
-      ctx.beginPath();
-      ctx.rect(this.xPosition, this.yPosition, this.width, this.height);
-      ctx.fillStyle = this.color;
-      ctx.fill();
-      ctx.closePath();
+      canvasObj.ctx.beginPath();
+      canvasObj.ctx.rect(
+        this.xPosition,
+        this.yPosition,
+        this.width,
+        this.height
+      );
+      canvasObj.ctx.fillStyle = this.color;
+      canvasObj.ctx.fill();
+      canvasObj.ctx.closePath();
     }
   }
 }
 
 const CANVAS_ID = "myCanvas";
-const canvas = document.getElementById(CANVAS_ID);
-// @ts-ignore
-const ctx = canvas.getContext("2d");
+const canvasObj = new Canvas(CANVAS_ID);
 
-// @ts-ignore
-let xPosition = canvas.width / 2;
-// @ts-ignore
-let yPosition = canvas.height - 30;
+let xPosition = canvasObj.canvas.width / 2;
+let yPosition = canvasObj.canvas.height - 30;
 
 let xDirection = 2;
 let yDirection = -2;
 
 let ball = {
-  xPosition: canvas.width / 2,
-  yPosition: canvas.height - 30,
+  xPosition: canvasObj.canvas.width / 2,
+  yPosition: canvasObj.canvas.height - 30,
   xDirection: 2,
   yDirection: -2,
   radius: 10,
@@ -43,8 +55,8 @@ let ball = {
 };
 
 let paddle = {
-  xPosition: (canvas.width - 80) / 2,
-  yPosition: canvas.height - 10,
+  xPosition: (canvasObj.canvas.width - 80) / 2,
+  yPosition: canvasObj.canvas.height - 10,
   width: 80,
   height: 10,
   color: "#0095DD",
@@ -64,8 +76,7 @@ let drawScoreColor = MAIN_COLOR;
 
 const PADDLE_HEIGHT = 10;
 const PADDLE_WIDTH = 80;
-// @ts-ignore
-let xPaddle = (canvas.width - PADDLE_WIDTH) / 2;
+let xPaddle = (canvasObj.canvas.width - PADDLE_WIDTH) / 2;
 
 let rightPressed = false;
 let leftPressed = false;
@@ -82,7 +93,7 @@ const BRICK_HEIGHT = 20;
 const BRICK_PADDING = 10;
 const BRICK_OFFSET_TOP = 30;
 const BRICK_OFFSET_LEFT = 30;
-const BRICK_COLOR = "#0095DD"; // Vous pouvez définir la couleur souhaitée pour les briques ici
+const BRICK_COLOR = "#0095DD";
 
 let interval;
 let score = 0;
@@ -94,29 +105,36 @@ for (let column = 0; column < BRICK_COLUMN_COUNT; column++) {
   for (let row = 0; row < BRICK_ROW_COUNT; row++) {
     let brickX = column * (BRICK_WIDTH + BRICK_PADDING) + BRICK_OFFSET_LEFT;
     let brickY = row * (BRICK_HEIGHT + BRICK_PADDING) + BRICK_OFFSET_TOP;
-
-    // Créer une nouvelle instance de la classe Brick
     let brick = new Brick(brickX, brickY);
-
-    // Ajouter la brique à la position appropriée dans le tableau
     bricks[column][row] = brick;
   }
 }
 
 const drawBall = () => {
-  ctx.beginPath();
-  ctx.arc(ball.xPosition, ball.yPosition, BALL_RADIUS, 0, Math.PI * 2);
-  ctx.fillStyle = ballColor;
-  ctx.fill();
-  ctx.closePath();
+  canvasObj.ctx.beginPath();
+  canvasObj.ctx.arc(
+    ball.xPosition,
+    ball.yPosition,
+    BALL_RADIUS,
+    0,
+    Math.PI * 2
+  );
+  canvasObj.ctx.fillStyle = ballColor;
+  canvasObj.ctx.fill();
+  canvasObj.ctx.closePath();
 };
 
 const drawPaddle = () => {
-  ctx.beginPath();
-  ctx.rect(paddle.xPosition, paddle.yPosition, paddle.width, paddle.height);
-  ctx.fillStyle = paddleColor;
-  ctx.fill();
-  ctx.closePath();
+  canvasObj.ctx.beginPath();
+  canvasObj.ctx.rect(
+    paddle.xPosition,
+    paddle.yPosition,
+    paddle.width,
+    paddle.height
+  );
+  canvasObj.ctx.fillStyle = paddleColor;
+  canvasObj.ctx.fill();
+  canvasObj.ctx.closePath();
 };
 
 const drawBricks = () => {
@@ -128,9 +146,9 @@ const drawBricks = () => {
 };
 
 const drawScore = () => {
-  ctx.font = "16px Arial";
-  ctx.fillStyle = drawScoreColor;
-  ctx.fillText("Score: " + score, 8, 20);
+  canvasObj.ctx.font = "16px Arial";
+  canvasObj.ctx.fillStyle = drawScoreColor;
+  canvasObj.ctx.fillText("Score: " + score, 8, 20);
 };
 
 const getRandomHexadecimalColor = () => {
@@ -175,8 +193,7 @@ const displayGameResultMsg = () => {
 
 const checkPaddleEdgeCollisions = () => {
   if (
-    // @ts-ignore
-    ball.yPosition + BALL_RADIUS > canvas.height - BALL_RADIUS &&
+    ball.yPosition + BALL_RADIUS > canvasObj.canvas.height - BALL_RADIUS &&
     (ball.xPosition < paddle.xPosition ||
       ball.xPosition > paddle.xPosition + paddle.width)
   ) {
@@ -190,16 +207,17 @@ const checkPaddleEdgeCollisions = () => {
 const ballCollisionAgainstWall = () => {
   if (
     ball.xPosition + ball.xDirection < BALL_RADIUS ||
-    // @ts-ignore
-    ball.xPosition + ball.xDirection > canvas.width - BALL_RADIUS
+    ball.xPosition + ball.xDirection > canvasObj.canvas.width - BALL_RADIUS
   ) {
     ball.xDirection = -ball.xDirection;
   }
 
   if (ball.yPosition + ball.yDirection < BALL_RADIUS) {
     ball.yDirection = -ball.yDirection;
-    // @ts-ignore
-  } else if (ball.yPosition + BALL_RADIUS > canvas.height - BALL_RADIUS) {
+  } else if (
+    ball.yPosition + BALL_RADIUS >
+    canvasObj.canvas.height - BALL_RADIUS
+  ) {
     if (
       ball.xPosition > paddle.xPosition &&
       ball.xPosition < paddle.xPosition + paddle.width
@@ -249,20 +267,17 @@ const ballCollisionAgainstBricks = () => {
 };
 
 const mouseMoveHandler = (event) => {
-  // @ts-ignore
-  let relativeX = event.clientX - canvas.offsetLeft;
+  let relativeX = event.clientX - canvasObj.canvas.offsetLeft;
   if (
     relativeX > paddle.width / 2 &&
-    // @ts-ignore
-    relativeX < canvas.width - paddle.width / 2
+    relativeX < canvasObj.canvas.width - paddle.width / 2
   ) {
     paddle.xPosition = relativeX - paddle.width / 2;
   }
 };
 
 const play = () => {
-  // @ts-ignore
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  canvasObj.clearCanvas();
   drawBall();
   drawBricks();
   drawPaddle();
@@ -281,10 +296,8 @@ const play = () => {
     if (!gameOverFlag) {
       if (rightPressed) {
         paddle.xPosition += paddle.speed;
-        // @ts-ignore
-        if (paddle.xPosition + paddle.width > canvas.width) {
-          // @ts-ignore
-          paddle.xPosition = canvas.width - paddle.width;
+        if (paddle.xPosition + paddle.width > canvasObj.canvas.width) {
+          paddle.xPosition = canvasObj.canvas.width - paddle.width;
         }
       } else if (leftPressed) {
         paddle.xPosition -= paddle.speed;
