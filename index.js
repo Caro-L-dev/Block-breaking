@@ -10,9 +10,12 @@ let yDirection = -2;
 let ballRadius = 10;
 let ballSpeed = 1;
 
-let ballColor = "#0095DD";
-let brickColor = "#0095DD";
-let paddleColor = "#0095DD";
+let mainColor = "#0095DD";
+let ballColor = mainColor;
+let brickColor = mainColor;
+let paddleColor = mainColor;
+let drawScoreColor = mainColor;
+let gameOverMessageColor = "#991b1b";
 
 const paddleHeight = 10;
 const paddleWidth = 80;
@@ -77,7 +80,7 @@ const drawBricks = () => {
 
 const drawScore = () => {
   ctx.font = "16px Arial";
-  ctx.fillStyle = "#0095DD";
+  ctx.fillStyle = drawScoreColor;
   ctx.fillText("Score: " + score, 8, 20);
 };
 
@@ -99,7 +102,7 @@ const gameOver = () => {
     gameOverFlag = true;
     let gameOverMessage = document.createElement("div");
     gameOverMessage.innerHTML = "<h2>Game Over</h2>";
-    gameOverMessage.style.color = "#FF0000";
+    gameOverMessage.style.color = gameOverMessageColor;
     gameOverMessage.style.textAlign = "center";
 
     let replayButton = document.createElement("button");
@@ -112,8 +115,19 @@ const gameOver = () => {
 
     document.body.appendChild(gameOverMessage);
 
-    // Stop the game loop
     cancelAnimationFrame(interval);
+  }
+};
+
+const checkPaddleEdgeCollisions = () => {
+  if (
+    yPosition + yDirection > canvas.height - ballRadius &&
+    (xPosition < paddleX || xPosition > paddleX + paddleWidth)
+  ) {
+    xDirection = -xDirection;
+  } else {
+    yDirection = -yDirection;
+    ballSpeed += 0.2;
   }
 };
 
@@ -129,8 +143,7 @@ const ballCollisionAgainstWall = () => {
     yDirection = -yDirection;
   } else if (yPosition + yDirection > canvas.height - ballRadius) {
     if (xPosition > paddleX && xPosition < paddleX + paddleWidth) {
-      yDirection = -yDirection;
-      ballSpeed += 0.2;
+      checkPaddleEdgeCollisions();
     } else {
       gameOver();
     }
