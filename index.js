@@ -72,12 +72,6 @@ class Brick {
 const CANVAS_ID = "myCanvas";
 const canvasObj = new Canvas(CANVAS_ID);
 
-let ballX = canvasObj.canvas.width / 2;
-let ballY = canvasObj.canvas.height - 30;
-
-let ballXDirection = 2;
-let ballYDirection = -2;
-
 let ball = {
   xPosition: canvasObj.canvas.width / 2,
   yPosition: canvasObj.canvas.height - 30,
@@ -110,7 +104,6 @@ let drawScoreColor = MAIN_COLOR;
 
 const PADDLE_HEIGHT = 10;
 const PADDLE_WIDTH = 80;
-let paddleX = (canvasObj.canvas.width - PADDLE_WIDTH) / 2;
 
 let isRightKeyPressed = false;
 let isLeftKeyPressed = false;
