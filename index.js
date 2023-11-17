@@ -99,12 +99,12 @@ const changeBallColor = () => {
 };
 
 const gameOver = () => {
-  if (!gameOverFlag) {
+  if (!gameOverFlag && score !== brickRowCount * brickColumnCount) {
     gameOverFlag = true;
-    let gameOverMessage = document.createElement("div");
-    gameOverMessage.innerHTML = "<h2>Game Over</h2>";
-    gameOverMessage.style.color = gameOverMsgColor;
-    gameOverMessage.style.textAlign = "center";
+    let gameOverMsg = document.createElement("div");
+    gameOverMsg.innerHTML = "<h2>Game Over</h2>";
+    gameOverMsg.style.color = gameOverMsgColor;
+    gameOverMsg.style.textAlign = "center";
 
     let replayButton = document.createElement("button");
     replayButton.id = "replayButton";
@@ -112,9 +112,9 @@ const gameOver = () => {
     replayButton.addEventListener("click", () => {
       document.location.reload();
     });
-    gameOverMessage.appendChild(replayButton);
+    gameOverMsg.appendChild(replayButton);
 
-    document.body.appendChild(gameOverMessage);
+    document.body.appendChild(gameOverMsg);
 
     cancelAnimationFrame(interval);
   }
@@ -167,7 +167,28 @@ const keyNoPressed = (event) => {
   }
 };
 
-const collisionDetection = () => {
+const displayVictoryMsg = () => {
+  if (score == brickRowCount * brickColumnCount) {
+    let victoryMsg = document.createElement("div");
+    victoryMsg.innerHTML = "<h2>Super, vous avez gagné !</h2>";
+    victoryMsg.style.color = victoryMsgColor;
+    victoryMsg.style.textAlign = "center";
+
+    let replayButton = document.createElement("button");
+    replayButton.id = "replayButton";
+    replayButton.textContent = "Rejouer";
+    replayButton.addEventListener("click", () => {
+      document.location.reload();
+    });
+    victoryMsg.appendChild(replayButton);
+
+    document.body.appendChild(victoryMsg);
+
+    cancelAnimationFrame(interval);
+  }
+};
+
+const ballCollisionAgainstBricks = () => {
   for (let column = 0; column < brickColumnCount; column++) {
     for (let row = 0; row < brickRowCount; row++) {
       let brick = bricks[column][row];
@@ -182,10 +203,6 @@ const collisionDetection = () => {
           brick.isVisible = false;
           changeBallColor();
           score++;
-          if (score == brickRowCount * brickColumnCount) {
-            alert("C'est gagné, Bravo!");
-            document.location.reload();
-          }
         }
       }
     }
@@ -209,29 +226,38 @@ const play = () => {
   drawPaddle();
   drawScore();
   ballCollisionAgainstWall();
-  collisionDetection();
+  ballCollisionAgainstBricks();
 
   if (!gameOverFlag) {
-    if (rightPressed) {
-      paddleX += 7;
-      if (paddleX + paddleWidth > canvas.width) {
-        paddleX = canvas.width - paddleWidth;
-      }
-    } else if (leftPressed) {
-      paddleX -= 7;
-      if (paddleX < 0) {
-        paddleX = 0;
-      }
+    if (score === brickRowCount * brickColumnCount) {
+      displayVictoryMsg();
+      gameOverFlag = true;
+      cancelAnimationFrame(interval);
+      return;
     }
 
-    xPosition += xDirection * ballSpeed;
-    yPosition += yDirection * ballSpeed;
-    interval = requestAnimationFrame(play);
-  }
-};
+    if (!gameOverFlag) {
+      if (rightPressed) {
+        paddleX += 7;
+        if (paddleX + paddleWidth > canvas.width) {
+          paddleX = canvas.width - paddleWidth;
+        }
+      } else if (leftPressed) {
+        paddleX -= 7;
+        if (paddleX < 0) {
+          paddleX = 0;
+        }
+      }
 
-document.addEventListener("keydown", keyPressed, false);
-document.addEventListener("keyup", keyNoPressed, false);
-document.addEventListener("mousemove", mouseMoveHandler, false);
+      xPosition += xDirection * ballSpeed;
+      yPosition += yDirection * ballSpeed;
+      interval = requestAnimationFrame(play);
+    }
+  }
+
+  document.addEventListener("keydown", keyPressed, false);
+  document.addEventListener("keyup", keyNoPressed, false);
+  document.addEventListener("mousemove", mouseMoveHandler, false);
+};
 
 play();
