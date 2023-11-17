@@ -21,6 +21,15 @@ let ball = {
   color: "#0095DD",
 };
 
+let paddle = {
+  xPosition: (canvas.width - 80) / 2,
+  yPosition: canvas.height - 10,
+  width: 80,
+  height: 10,
+  color: "#0095DD",
+  speed: 7,
+};
+
 const BALL_RADIUS = ball.radius;
 
 const MAIN_COLOR = "#0095DD";
@@ -76,8 +85,7 @@ const drawBall = () => {
 
 const drawPaddle = () => {
   ctx.beginPath();
-  // @ts-ignore
-  ctx.rect(xPaddle, canvas.height - PADDLE_HEIGHT, PADDLE_WIDTH, PADDLE_HEIGHT);
+  ctx.rect(paddle.xPosition, paddle.yPosition, paddle.width, paddle.height);
   ctx.fillStyle = paddleColor;
   ctx.fill();
   ctx.closePath();
@@ -150,8 +158,9 @@ const displayGameResultMsg = () => {
 const checkPaddleEdgeCollisions = () => {
   if (
     // @ts-ignore
-    yPosition + BALL_RADIUS > canvas.height - BALL_RADIUS &&
-    (xPosition < xPaddle || xPosition > xPaddle + PADDLE_WIDTH)
+    ball.yPosition + BALL_RADIUS > canvas.height - BALL_RADIUS &&
+    (ball.xPosition < paddle.xPosition ||
+      ball.xPosition > paddle.xPosition + paddle.width)
   ) {
     ball.xDirection = -ball.xDirection;
   } else {
@@ -173,7 +182,10 @@ const ballCollisionAgainstWall = () => {
     ball.yDirection = -ball.yDirection;
     // @ts-ignore
   } else if (ball.yPosition + BALL_RADIUS > canvas.height - BALL_RADIUS) {
-    if (ball.xPosition > xPaddle && ball.xPosition < xPaddle + PADDLE_WIDTH) {
+    if (
+      ball.xPosition > paddle.xPosition &&
+      ball.xPosition < paddle.xPosition + paddle.width
+    ) {
       checkPaddleEdgeCollisions();
     } else {
       displayGameResultMsg();
@@ -222,11 +234,11 @@ const mouseMoveHandler = (event) => {
   // @ts-ignore
   let relativeX = event.clientX - canvas.offsetLeft;
   if (
-    relativeX > PADDLE_WIDTH / 2 &&
+    relativeX > paddle.width / 2 &&
     // @ts-ignore
-    relativeX < canvas.width - PADDLE_WIDTH / 2
+    relativeX < canvas.width - paddle.width / 2
   ) {
-    xPaddle = relativeX - PADDLE_WIDTH / 2;
+    paddle.xPosition = relativeX - paddle.width / 2;
   }
 };
 
@@ -250,16 +262,16 @@ const play = () => {
 
     if (!gameOverFlag) {
       if (rightPressed) {
-        xPaddle += 7;
+        paddle.xPosition += paddle.speed;
         // @ts-ignore
-        if (xPaddle + PADDLE_WIDTH > canvas.width) {
+        if (paddle.xPosition + paddle.width > canvas.width) {
           // @ts-ignore
-          xPaddle = canvas.width - PADDLE_WIDTH;
+          paddle.xPosition = canvas.width - paddle.width;
         }
       } else if (leftPressed) {
-        xPaddle -= 7;
-        if (xPaddle < 0) {
-          xPaddle = 0;
+        paddle.xPosition -= paddle.speed;
+        if (paddle.xPosition < 0) {
+          paddle.xPosition = 0;
         }
       }
 
