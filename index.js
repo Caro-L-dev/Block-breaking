@@ -11,8 +11,17 @@ let yPosition = canvas.height - 30;
 let xDirection = 2;
 let yDirection = -2;
 
-const BALL_RADIUS = 10;
-let ballSpeed = 1;
+let ball = {
+  xPosition: canvas.width / 2,
+  yPosition: canvas.height - 30,
+  xDirection: 2,
+  yDirection: -2,
+  radius: 10,
+  speed: 1,
+  color: "#0095DD",
+};
+
+const BALL_RADIUS = ball.radius;
 
 const MAIN_COLOR = "#0095DD";
 const GAME_OVER_MSG_COLOR = "#991b1b";
@@ -59,7 +68,7 @@ for (let column = 0; column < BRICK_COLUMN_COUNT; column++) {
 
 const drawBall = () => {
   ctx.beginPath();
-  ctx.arc(xPosition, yPosition, BALL_RADIUS, 0, Math.PI * 2);
+  ctx.arc(ball.xPosition, ball.yPosition, BALL_RADIUS, 0, Math.PI * 2);
   ctx.fillStyle = ballColor;
   ctx.fill();
   ctx.closePath();
@@ -144,27 +153,27 @@ const checkPaddleEdgeCollisions = () => {
     yPosition + BALL_RADIUS > canvas.height - BALL_RADIUS &&
     (xPosition < xPaddle || xPosition > xPaddle + PADDLE_WIDTH)
   ) {
-    xDirection = -xDirection;
+    ball.xDirection = -ball.xDirection;
   } else {
-    yDirection = -yDirection;
-    ballSpeed += 0.2;
+    ball.yDirection = -ball.yDirection;
+    ball.speed += 0.2;
   }
 };
 
 const ballCollisionAgainstWall = () => {
   if (
-    xPosition + xDirection < BALL_RADIUS ||
+    ball.xPosition + ball.xDirection < BALL_RADIUS ||
     // @ts-ignore
-    xPosition + xDirection > canvas.width - BALL_RADIUS
+    ball.xPosition + ball.xDirection > canvas.width - BALL_RADIUS
   ) {
-    xDirection = -xDirection;
+    ball.xDirection = -ball.xDirection;
   }
 
-  if (yPosition + yDirection < BALL_RADIUS) {
-    yDirection = -yDirection;
+  if (ball.yPosition + ball.yDirection < BALL_RADIUS) {
+    ball.yDirection = -ball.yDirection;
     // @ts-ignore
-  } else if (yPosition + BALL_RADIUS > canvas.height - BALL_RADIUS) {
-    if (xPosition > xPaddle && xPosition < xPaddle + PADDLE_WIDTH) {
+  } else if (ball.yPosition + BALL_RADIUS > canvas.height - BALL_RADIUS) {
+    if (ball.xPosition > xPaddle && ball.xPosition < xPaddle + PADDLE_WIDTH) {
       checkPaddleEdgeCollisions();
     } else {
       displayGameResultMsg();
@@ -194,12 +203,12 @@ const ballCollisionAgainstBricks = () => {
       let brick = bricks[column][row];
       if (brick.isVisible) {
         if (
-          xPosition > brick.xPosition &&
-          xPosition < brick.xPosition + BRICK_WIDTH &&
-          yPosition > brick.yPosition &&
-          yPosition < brick.yPosition + BRICK_HEIGHT
+          ball.xPosition > brick.xPosition &&
+          ball.xPosition < brick.xPosition + BRICK_WIDTH &&
+          ball.yPosition > brick.yPosition &&
+          ball.yPosition < brick.yPosition + BRICK_HEIGHT
         ) {
-          yDirection = -yDirection;
+          ball.yDirection = -ball.yDirection;
           brick.isVisible = false;
           changeBallColor();
           score++;
@@ -254,8 +263,8 @@ const play = () => {
         }
       }
 
-      xPosition += xDirection * ballSpeed;
-      yPosition += yDirection * ballSpeed;
+      ball.xPosition += ball.xDirection * ball.speed;
+      ball.yPosition += ball.yDirection * ball.speed;
       interval = requestAnimationFrame(play);
     }
   }
