@@ -115,20 +115,14 @@ const showMessage = (msg, color) => {
   document.body.appendChild(message);
 };
 
-const displayGameOverMsg = () => {
-  if (!gameOverFlag && score !== brickRowCount * brickColumnCount) {
-    gameOverFlag = true;
+const displayGameResultMsg = () => {
+  gameOverFlag = true;
+  if (score !== brickRowCount * brickColumnCount) {
     showMessage("Game Over", gameOverMsgColor);
-    cancelAnimationFrame(interval);
-  }
-};
-
-const displayVictoryMsg = () => {
-  if (score == brickRowCount * brickColumnCount) {
-    gameOverFlag = true;
+  } else {
     showMessage("Super, vous avez gagné !", victoryMsgColor);
-    cancelAnimationFrame(interval);
   }
+  cancelAnimationFrame(interval);
 };
 
 const checkPaddleEdgeCollisions = () => {
@@ -157,7 +151,7 @@ const ballCollisionAgainstWall = () => {
     if (xPosition > paddleX && xPosition < paddleX + paddleWidth) {
       checkPaddleEdgeCollisions();
     } else {
-      displayGameOverMsg();
+      displayGameResultMsg();
     }
   }
 };
@@ -220,7 +214,7 @@ const play = () => {
 
   if (!gameOverFlag) {
     if (score === brickRowCount * brickColumnCount) {
-      displayVictoryMsg();
+      displayGameResultMsg();
       gameOverFlag = true;
       cancelAnimationFrame(interval);
       return;
