@@ -1,3 +1,24 @@
+class Brick {
+  constructor(x, y) {
+    this.xPosition = x;
+    this.yPosition = y;
+    this.isVisible = true;
+    this.width = BRICK_WIDTH;
+    this.height = BRICK_HEIGHT;
+    this.color = BRICK_COLOR;
+  }
+
+  drawBrick() {
+    if (this.isVisible) {
+      ctx.beginPath();
+      ctx.rect(this.xPosition, this.yPosition, this.width, this.height);
+      ctx.fillStyle = this.color;
+      ctx.fill();
+      ctx.closePath();
+    }
+  }
+}
+
 const CANVAS_ID = "myCanvas";
 const canvas = document.getElementById(CANVAS_ID);
 // @ts-ignore
@@ -61,6 +82,7 @@ const BRICK_HEIGHT = 20;
 const BRICK_PADDING = 10;
 const BRICK_OFFSET_TOP = 30;
 const BRICK_OFFSET_LEFT = 30;
+const BRICK_COLOR = "#0095DD"; // Vous pouvez définir la couleur souhaitée pour les briques ici
 
 let interval;
 let score = 0;
@@ -70,8 +92,14 @@ let bricks = [];
 for (let column = 0; column < BRICK_COLUMN_COUNT; column++) {
   bricks[column] = [];
   for (let row = 0; row < BRICK_ROW_COUNT; row++) {
-    // @ts-ignore
-    bricks[column][row] = { xPosition: 0, yPosition: 0, isVisible: 1 };
+    let brickX = column * (BRICK_WIDTH + BRICK_PADDING) + BRICK_OFFSET_LEFT;
+    let brickY = row * (BRICK_HEIGHT + BRICK_PADDING) + BRICK_OFFSET_TOP;
+
+    // Créer une nouvelle instance de la classe Brick
+    let brick = new Brick(brickX, brickY);
+
+    // Ajouter la brique à la position appropriée dans le tableau
+    bricks[column][row] = brick;
   }
 }
 
@@ -94,17 +122,7 @@ const drawPaddle = () => {
 const drawBricks = () => {
   for (let column = 0; column < BRICK_COLUMN_COUNT; column++) {
     for (let row = 0; row < BRICK_ROW_COUNT; row++) {
-      if (bricks[column][row].isVisible) {
-        let brickX = column * (BRICK_WIDTH + BRICK_PADDING) + BRICK_OFFSET_LEFT;
-        let brickY = row * (BRICK_HEIGHT + BRICK_PADDING) + BRICK_OFFSET_TOP;
-        bricks[column][row].xPosition = brickX;
-        bricks[column][row].yPosition = brickY;
-        ctx.beginPath();
-        ctx.rect(brickX, brickY, BRICK_WIDTH, BRICK_HEIGHT);
-        ctx.fillStyle = brickColor;
-        ctx.fill();
-        ctx.closePath();
-      }
+      bricks[column][row].drawBrick();
     }
   }
 };
